@@ -1,6 +1,6 @@
 <h1 align="center">
   <br>
-  <a href="https://www.fiap.com.br/"><img src="https://user-images.githubusercontent.com/5009611/96375143-9ed75c00-114d-11eb-8d23-6fec5aaeb143.png" alt="FIAP" width="200"></a>
+  <a href="https://www.fiap.com.br/"><img src="https://user-images.githubusercontent.com/5009611/96375143-9ed75c00-114d-11eb-8d23-6fec5aaeb143.png" alt="FIAP" width="100"></a>
   <br>FIAP:  MBA Software Engineering - 75AOJ
   <br>
 </h1>
