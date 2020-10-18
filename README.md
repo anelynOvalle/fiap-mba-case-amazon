@@ -19,8 +19,10 @@
 
 ## Key Features
 
-* JAVA Microservices - Build with Spring Boot.
+* JAVA Microservices - Spring Boot.
+* Config Manager - Spring Boot.
 * Service discovery - Netflix Eureka.
+* Message broker - Apache Kafka.
 * Postgres Database.
 
 
@@ -39,6 +41,7 @@ Soon!
 ## Related
 
 [netflix-eureka](https://github.com/Netflix/eureka) - Eureka is a REST (Representational State Transfer) based service that is primarily used in the AWS cloud for locating services for the purpose of load balancing and failover of middle-tier servers.
+[apache-kafka](https://github.com/apache/kafka) - Apache Kafka is an open-source distributed event streaming platform used by thousands of companies for high-performance data pipelines, streaming analytics, data integration, and mission-critical applications..
 
 
 ## License
