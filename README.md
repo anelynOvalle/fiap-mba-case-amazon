@@ -1,6 +1,4 @@
-<h1 align="center">
-  <br>
-  <a href="https://www.fiap.com.br/"><img src="https://user-images.githubusercontent.com/5009611/96375143-9ed75c00-114d-11eb-8d23-6fec5aaeb143.png" alt="FIAP" width="100"></a>
+<h1 align="center"> 
   <br>FIAP:  MBA Software Engineering - 75AOJ
   <br>
 </h1>
@@ -17,7 +15,7 @@
 </p>
 
 ## Project Architecture
-![screenshot](https://user-images.githubusercontent.com/5009611/96375068-35efe400-114d-11eb-8e4f-78b7ae0544d4.jpg)
+![screenshot](https://user-images.githubusercontent.com/5009611/96375830-c8928200-1151-11eb-8fec-adb16257efda.jpg)
 
 ## Key Features
 
