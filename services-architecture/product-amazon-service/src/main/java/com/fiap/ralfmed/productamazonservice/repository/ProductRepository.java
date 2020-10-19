@@ -8,4 +8,8 @@ import java.util.List;
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
     List<Product> findByGenre(String genre);
+
+    List<Product> findByNameContains(String name);
+
+    List<Product> findByFavoriteGreaterThan(Long number);
 }

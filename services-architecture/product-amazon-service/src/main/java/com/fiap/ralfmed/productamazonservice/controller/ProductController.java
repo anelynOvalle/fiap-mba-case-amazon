@@ -26,13 +26,25 @@ public class ProductController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Product findById(@RequestParam Long id){
+    public ProductDTO findById(@RequestParam Long id){
         return productService.findById(id);
     }
 
     @GetMapping("/findByGenre")
     @ResponseStatus(HttpStatus.OK)
-    public List<Product> findByGenre(@RequestParam String genre){
+    public List<ProductDTO> findByGenre(@RequestParam String genre){
         return productService.findByGender(genre);
+    }
+
+    @GetMapping("/findByKeyWord")
+    @ResponseStatus(HttpStatus.OK)
+    public List<ProductDTO> findByKeyWord(@RequestParam String keyword){
+        return productService.listProductContainsName(keyword);
+    }
+
+    @GetMapping("/findByFavorite")
+    @ResponseStatus(HttpStatus.OK)
+    public List<ProductDTO> findByFavorite(@RequestParam Long number){
+        return productService.findByFavorite(number);
     }
 }

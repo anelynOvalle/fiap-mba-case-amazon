@@ -37,6 +37,7 @@ public class Product {
         product.setName(productDTO.getName());
         product.setCategory(productDTO.getCategory());
         product.setGenre(productDTO.getGenre());
+        product.setFavorite(0L);
 
         return product;
     }

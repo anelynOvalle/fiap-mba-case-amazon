@@ -9,7 +9,11 @@ public interface ProductService {
 
     Product create(ProductDTO productDTO);
 
-    Product findById(Long id);
+    ProductDTO findById(Long id);
 
-    List<Product> findByGender(String genre);
+    List<ProductDTO> findByGender(String genre);
+
+    List<ProductDTO> listProductContainsName(String name);
+
+    List<ProductDTO> findByFavorite(Long numero);
 }
