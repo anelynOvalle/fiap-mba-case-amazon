@@ -1,5 +1,6 @@
 package com.fiap.ralfmed.productamazonservice.dto;
 
+import com.fiap.ralfmed.productamazonservice.entity.Product;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,9 +10,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ProductDTO {
 
-    private String name;
+    public String name;
 
-    private String category;
+    public String category;
 
-    private String genre;
+    public String genre;
+
+    public Float price;
+
+    public String description;
+
+    public static ProductDTO convertProductDto(Product product){
+        ProductDTO productDTO = new ProductDTO(product.getName(), product.getCategory(), product.getGenre(), product.getPrice(), product.getDescription());
+        return productDTO;
+    }
 }

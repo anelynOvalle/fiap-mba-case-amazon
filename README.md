@@ -12,18 +12,18 @@
   <a href="#credits">Credits</a> •
   <a href="#related">Related</a> •
   <a href="#license">License</a>
-</p>
+</p>s
 
 ## Project Architecture
-![screenshot](https://user-images.githubusercontent.com/5009611/96375830-c8928200-1151-11eb-8fec-adb16257efda.jpg)
+![screenshot](https://user-images.githubusercontent.com/5009611/97039649-2274bc80-1543-11eb-9815-eb6785874a50.jpg)
 
 ## Key Features
 
 * JAVA Microservices - Spring Boot.
 * Config Manager - Spring Boot.
 * Service discovery - Netflix Eureka.
-* Message broker - Apache Kafka.
-* Postgres Database.
+* Message broker - Apache Kafka + Zookeper.
+* Postgres Databases.
 
 
 ## How to use
