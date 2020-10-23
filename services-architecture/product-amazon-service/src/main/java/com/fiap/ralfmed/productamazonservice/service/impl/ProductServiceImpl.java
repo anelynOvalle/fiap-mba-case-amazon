@@ -35,7 +35,7 @@ public class ProductServiceImpl implements ProductService {
     public List<ProductDTO> findByGender(String genre) {
         List<ProductDTO> productDTOList = new ArrayList<>();
         for (Product product : productRepository.findByGenre(genre)){
-            returnListProdutDto(product, productDTOList);
+            returnListProductDto(product, productDTOList);
         }
         return productDTOList;
     }
@@ -53,13 +53,13 @@ public class ProductServiceImpl implements ProductService {
     public List<ProductDTO> findByFavorite(Long number) {
         List<ProductDTO> productDTOList = new ArrayList<>();
         for (Product product : productRepository.findByFavoriteGreaterThan(number)){
-            returnListProdutDto(product, productDTOList);
+            returnListProductDto(product, productDTOList);
         }
         return productDTOList;
     }
 
-    private List<ProductDTO> returnListProdutDto(Product product, List<ProductDTO> productDTOList){
-        ProductDTO productDTO = new ProductDTO(product.getName(), product.getCategory(), product.getGenre());
+    private List<ProductDTO> returnListProductDto(Product product, List<ProductDTO> productDTOList){
+        ProductDTO productDTO = new ProductDTO(product.getName(), product.getCategory(), product.getGenre(), product.getPrice(), product.getDescription());
         productDTOList.add(productDTO);
         return productDTOList;
     }

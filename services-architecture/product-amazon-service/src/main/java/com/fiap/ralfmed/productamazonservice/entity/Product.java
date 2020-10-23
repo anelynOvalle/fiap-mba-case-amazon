@@ -22,11 +22,15 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    public String name;
 
-    private String category;
+    public String category;
 
-    private String genre;
+    public String genre;
+
+    public Float price;
+
+    public String description;
 
     @JsonInclude(Include.NON_NULL)
     private Long favorite;
@@ -37,6 +41,8 @@ public class Product {
         product.setName(productDTO.getName());
         product.setCategory(productDTO.getCategory());
         product.setGenre(productDTO.getGenre());
+        product.setPrice(productDTO.getPrice());
+        product.setDescription(productDTO.getDescription());
         product.setFavorite(0L);
 
         return product;
