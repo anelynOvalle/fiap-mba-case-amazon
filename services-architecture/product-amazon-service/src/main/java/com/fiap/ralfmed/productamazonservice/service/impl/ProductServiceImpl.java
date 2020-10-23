@@ -44,7 +44,7 @@ public class ProductServiceImpl implements ProductService {
     public List<ProductDTO> listProductContainsName(String name) {
         List<ProductDTO> productDTOList = new ArrayList<>();
         for (Product product : productRepository.findByNameContains(name)){
-            returnListProductDto(product, productDTOList);
+            returnListProdutDto(product, productDTOList);
         }
         return productDTOList;
     }
