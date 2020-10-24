@@ -20,9 +20,17 @@ import com.fiap.ralfmed.orderamazonservice.entity.Product;
 import org.springframework.web.client.RestTemplate;
 
 @Service
+@EnableBinding(Sink.class)
 public class OrderService {
 	@Autowired
 	private DiscoveryClient discoveryClient;
+
+	@StreamListener(target = Sink.INPUT)
+	public void consumerProductEvent(@Payload Product event) {
+		System.out.println("Received a product {} " + event.getId() + " Price: " +
+				event.getPrice());
+		MySimpleCache.put(event);
+	}
 
 	public Order createOrder(Order order) {
 		for (OrderLine orderLine : order.getOrderLineList()) {

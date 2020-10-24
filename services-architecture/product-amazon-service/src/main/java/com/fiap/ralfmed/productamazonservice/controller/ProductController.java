@@ -1,16 +1,18 @@
 package com.fiap.ralfmed.productamazonservice.controller;
 
-import java.util.List;
-
 import com.fiap.ralfmed.productamazonservice.dto.ProductDTO;
+import com.fiap.ralfmed.productamazonservice.dto.ProductPriceDTO;
+import com.fiap.ralfmed.productamazonservice.dto.ProductWishListDTO;
 import com.fiap.ralfmed.productamazonservice.entity.Product;
 import com.fiap.ralfmed.productamazonservice.service.ProductService;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @RestController
@@ -40,8 +42,18 @@ public class ProductController {
             commandProperties=
                     {@HystrixProperty(
                             name="execution.isolation.thread.timeoutInMilliseconds",value="20000")})
-    public ProductDTO findById(@PathVariable(name = "id") Long id){
+    public ProductDTO findById(@PathVariable(name = "id") Long id) {
         return productService.findById(id);
+    }
+
+    @GetMapping("/wishList")
+    @ResponseStatus(HttpStatus.OK)
+    @HystrixCommand(fallbackMethod  = "singleProductFallback",
+            commandProperties=
+                    {@HystrixProperty(
+                            name="execution.isolation.thread.timeoutInMilliseconds",value="20000")})
+    public List<ProductDTO> getWishList() {
+        return productService.getWishList();
     }
 
     @GetMapping("/findByGenre")
@@ -58,30 +70,37 @@ public class ProductController {
         return productService.listProductContainsName(keyword);
     }
 
-    @GetMapping("/findByFavorite")
+    @GetMapping("/findByMostViewed")
     @ResponseStatus(HttpStatus.OK)
     @HystrixCommand(fallbackMethod  = "listFallbackReturn")
-    public List<ProductDTO> findByFavorite(@RequestParam Long number){
-        return productService.findByFavorite(number);
+    public List<ProductDTO> findByMostViewed(@RequestParam Long number){
+        return productService.findByMostViewed(number);
     }
 
-    public Product singleProductFallback(ProductDTO productDTO) {
-        Product product = new Product();
-        product.name = "Erro ao cadastrar.";
-        product.category = "Inválido";
-        product.genre = "Tente novamente mais tarde ou contate o administrador do sistema.";
-        return product;
+    @PutMapping("/updatePrice/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @HystrixCommand(fallbackMethod  = "singleProductFallback",commandProperties=
+            {@HystrixProperty(name="execution.isolation.thread.timeoutInMilliseconds",value="20000")})
+    public Product updatePrice(@PathVariable(name = "id") Long id, @RequestBody ProductPriceDTO price){
+        return productService.updatePrice(id, price.getPrice());
     }
 
-    public List<ProductDTO> listFallbackReturn(String str){
-        List<ProductDTO> productDTOList = null;
+    @PutMapping("/wishList/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @HystrixCommand(fallbackMethod  = "singleProductFallback",commandProperties=
+            {@HystrixProperty(name="execution.isolation.thread.timeoutInMilliseconds",value="20000")})
+    public Product wishList(@PathVariable(name = "id") Long id, @RequestBody ProductWishListDTO wishList){
+        return productService.updateWishList(id, wishList.getWishList());
+    }
 
-        ProductDTO productDTO = new ProductDTO();
-        productDTO.name = "Erro ao solicitar informação.";
-        productDTO.category = "Inválido";
-        productDTO.genre = "Tente novamente mais tarde ou contate o administrador do sistema.";
+    public Product singleProductFallback() {
+        ProductDTO productDTO = new ProductDTO("Erro ao cadastrar.", "Inválido", "Tente novamente mais tarde ou contate o administrador do sistema.");
+        return new Product(productDTO);
+    }
 
-        productDTOList.add(productDTO);
+    public List<ProductDTO> listFallbackReturn(){
+        List<ProductDTO> productDTOList = new ArrayList<>();
+        productDTOList.add(new ProductDTO("Erro ao solicitar informação.", "Inválido", "Tente novamente mais tarde ou contate o administrador do sistema."));
         return productDTOList;
     }
 }

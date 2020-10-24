@@ -1,11 +1,12 @@
 package com.fiap.ralfmed.orderamazonservice.controller;
 
-import com.fiap.ralfmed.orderamazonservice.service.OrderService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import com.fiap.ralfmed.orderamazonservice.service.OrderService;
 import com.fiap.ralfmed.orderamazonservice.entity.Order;
 
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
