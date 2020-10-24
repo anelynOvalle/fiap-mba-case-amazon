@@ -1,8 +1,10 @@
 package com.fiap.ralfmed.productamazonservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fiap.ralfmed.productamazonservice.dto.ProductDTO;
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,18 +24,28 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    public String name;
+    private String name;
 
-    public String category;
+    private String category;
 
-    public String genre;
+    private String genre;
 
-    public Float price;
+    private Float price;
 
-    public String description;
+    private String description;
+
+    @JsonIgnore
+    private Boolean wishList;
 
     @JsonInclude(Include.NON_NULL)
-    private Long favorite;
+    private Long mostViewed;
+
+    public Product(ProductDTO productDTO){
+        this.name = productDTO.getName();
+        this.category = productDTO.getCategory();
+        this.genre = productDTO.getGenre();
+    }
+
 
     public static Product convertToProduct(ProductDTO productDTO){
         Product product = new Product();
@@ -43,8 +55,8 @@ public class Product {
         product.setGenre(productDTO.getGenre());
         product.setPrice(productDTO.getPrice());
         product.setDescription(productDTO.getDescription());
-        product.setFavorite(0L);
-
+        product.setMostViewed(0L);
+        product.setWishList(Boolean.FALSE);
         return product;
     }
 }
