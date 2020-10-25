@@ -1,51 +1,29 @@
 package com.fiap.ralfmed.orderamazonservice.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "purchase_order")
 public class Order {
 
-	@JsonProperty("id")
-	private int id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer id;
 
-	@JsonProperty("total_order")
 	private double totalOrder;
 
-	@JsonProperty("status")
 	private String status;
 
-	@JsonProperty("order_line_list")
-	private OrderLine[] orderLineList;
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public double getTotalOrder() {
-		return totalOrder;
-	}
-
-	public void setTotalOrder(double totalOrder) {
-		this.totalOrder = totalOrder;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
-	public OrderLine[] getOrderLineList() {
-		return orderLineList;
-	}
-
-	public void setOrderLineList(OrderLine[] orderLineList) {
-		this.orderLineList = orderLineList;
-	}
-
+  	@OneToMany(cascade = CascadeType.ALL, mappedBy = "order_id", fetch = FetchType.LAZY)
+	private List<OrderLine> products = new ArrayList<>();
 }

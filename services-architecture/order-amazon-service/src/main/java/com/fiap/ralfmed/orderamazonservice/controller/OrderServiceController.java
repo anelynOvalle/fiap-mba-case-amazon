@@ -1,15 +1,11 @@
 package com.fiap.ralfmed.orderamazonservice.controller;
 
+import com.fiap.ralfmed.orderamazonservice.entity.Order;
 import com.fiap.ralfmed.orderamazonservice.service.OrderService;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import com.fiap.ralfmed.orderamazonservice.entity.Order;
-
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 
 import java.util.List;
 
@@ -28,11 +24,17 @@ public class OrderServiceController {
 		return "Status do pedido = " + createOrder.getStatus() + ". O total do pedido é: " + createOrder.getTotalOrder();
 	}
 
-	/*@GetMapping("/{id}")
+	@GetMapping("/{id}")
 	@ResponseStatus(HttpStatus.OK)
 	public Order findById(@PathVariable(name = "id") Long id){
-		return Order.findById(id);
-	}*/
+		return orderService.findById(id);
+	}
+
+	@GetMapping("/getListOrder")
+	@ResponseStatus(HttpStatus.OK)
+	public List<Order> getListOrder(){
+		return orderService.getListOrder();
+	}
 
 	public Order singleOrderFallback(Order order) {
 		return order;

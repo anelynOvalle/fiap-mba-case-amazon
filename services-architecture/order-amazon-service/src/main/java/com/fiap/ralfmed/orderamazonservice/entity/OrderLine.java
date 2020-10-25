@@ -1,29 +1,25 @@
 package com.fiap.ralfmed.orderamazonservice.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import javax.persistence.*;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(name = "order_line")
 public class OrderLine {
 
-	@JsonProperty("product_id")
-	private int productId;
+	@Id
+	private Integer productId;
 
-	@JsonProperty("quantity")
-	private int quantity;
+	private Integer quantity;
 
-	public int getProductId() {
-		return productId;
-	}
-
-	public void setProductId(int productId) {
-		this.productId = productId;
-	}
-
-	public int getQuantity() {
-		return quantity;
-	}
-
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
-	}
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "order_id", referencedColumnName = "id")
+	private Order order_id;
 
 }
