@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @RestController
 @RequestMapping("/product")
 public class ProductController {
@@ -77,15 +76,15 @@ public class ProductController {
         return productService.findByMostViewed(number);
     }
 
-    @PutMapping("updatePrice/{id}")
+    @PutMapping("/updatePrice/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @HystrixCommand(fallbackMethod  = "singleProductFallback",commandProperties=
-                    {@HystrixProperty(name="execution.isolation.thread.timeoutInMilliseconds",value="20000")})
+            {@HystrixProperty(name="execution.isolation.thread.timeoutInMilliseconds",value="20000")})
     public Product updatePrice(@PathVariable(name = "id") Long id, @RequestBody ProductPriceDTO price){
         return productService.updatePrice(id, price.getPrice());
     }
 
-    @PutMapping("wishList/{id}")
+    @PutMapping("/wishList/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @HystrixCommand(fallbackMethod  = "singleProductFallback",commandProperties=
             {@HystrixProperty(name="execution.isolation.thread.timeoutInMilliseconds",value="20000")})

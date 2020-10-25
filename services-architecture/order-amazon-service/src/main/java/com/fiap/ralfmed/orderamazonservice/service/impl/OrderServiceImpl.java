@@ -9,8 +9,12 @@ import com.fiap.ralfmed.orderamazonservice.repository.ProductRepository;
 import com.fiap.ralfmed.orderamazonservice.service.OrderService;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.cloud.stream.annotation.EnableBinding;
+import org.springframework.cloud.stream.annotation.StreamListener;
+import org.springframework.cloud.stream.messaging.Sink;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -18,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@EnableBinding(Sink.class)
 public class OrderServiceImpl implements OrderService {
 
     private DiscoveryClient discoveryClient;
@@ -104,4 +109,13 @@ public class OrderServiceImpl implements OrderService {
     public List<Order> getListOrder() {
         return orderRepository.findAll();
     }
+
+    @StreamListener(target = Sink.INPUT)
+    @Override
+    public void consumerProductEvent(@Payload Product event) {
+        System.out.println("Received a product {} " + event.getId() + " Price: " +
+                event.getPrice());
+        MySimpleCache.put(event);
+    }
+
 }

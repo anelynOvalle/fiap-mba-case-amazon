@@ -12,7 +12,7 @@
   <a href="#credits">Credits</a> •
   <a href="#related">Related</a> •
   <a href="#license">License</a>
-</p>s
+</p>
 
 ## Project Architecture
 ![screenshot](https://user-images.githubusercontent.com/5009611/97039649-2274bc80-1543-11eb-9815-eb6785874a50.jpg)
