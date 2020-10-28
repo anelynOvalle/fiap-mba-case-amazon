@@ -9,20 +9,18 @@ import com.fiap.ralfmed.orderamazonservice.repository.ProductRepository;
 import com.fiap.ralfmed.orderamazonservice.service.OrderService;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
-import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.annotation.StreamListener;
-import org.springframework.cloud.stream.messaging.Sink;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
-@EnableBinding(Sink.class)
+//@EnableBinding(Sink.class)
 public class OrderServiceImpl implements OrderService {
 
     private DiscoveryClient discoveryClient;
@@ -39,42 +37,57 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order createOrder(Order order) {
+        OrderLine orderLineNew = new OrderLine();
+        Product product = new Product();
+        List<OrderLine> products = new ArrayList<>();
 
         for(OrderLine orderLine: order.getProducts()){
 
             Product productCache = MySimpleCache.get(orderLine.getProductId());
+            Product returnProduct = returnProductBase(product, orderLine);
 
             if(productCache==null){
-
-                Product product = new Product();
-
-                List<ServiceInstance> instances = discoveryClient.getInstances("productservice");
-                RestTemplate restTemplate = new RestTemplate();
-                String uri = String.format("%s/product/%s",
-                        instances.get(0).getUri().toString(), orderLine.getProductId());
-                ResponseEntity<Product> restExchange = restTemplate.exchange(uri,
-                        HttpMethod.GET, null, Product.class, orderLine.getProductId());
-                Product returnProduct = restExchange.getBody();
-
                 product = loadingProduct(returnProduct, orderLine);
 
                 if(verifyExistingProduct(product.getId())){
                     productRepository.save(product);
                 }
+
+                orderLineNew = loadingOrderLine(orderLine, order, products);
                 MySimpleCache.put(product);
+                order = calculateOrder(order, product, orderLineNew);
 
-                orderLine.setOrder_id(order);
-                order = calculateOrder(order, product, orderLine);
-
-                orderRepository.save(order);
             }else{
-                order = calculateOrder(order, productCache, orderLine);
-//                orderLine.setOrder_id(order);
-//                orderRepository.save(order);
+                orderLineNew = loadingOrderLine(orderLine, order, products);
+                order = calculateOrder(order, productCache, orderLineNew);
             }
         }
 
+        orderRepository.save(order);
         return order;
+    }
+
+    private OrderLine loadingOrderLine(OrderLine orderLine, Order orderNew, List<OrderLine> products) {
+        OrderLine orderLineNew = new OrderLine();
+        orderLineNew.setProductId(orderLine.getProductId());
+        orderLineNew.setQuantity(orderLine.getQuantity());
+
+        orderLineNew.setOrder_id(orderNew);
+        products.add(orderLineNew);
+        orderNew.setProducts(products);
+
+        return  orderLineNew;
+    }
+
+    private Product returnProductBase(Product product, OrderLine orderLine) {
+        List<ServiceInstance> instances = discoveryClient.getInstances("productservice");
+        RestTemplate restTemplate = new RestTemplate();
+        String uri = String.format("%s/product/%s",
+                instances.get(0).getUri().toString(), orderLine.getProductId());
+        ResponseEntity<Product> restExchange = restTemplate.exchange(uri,
+                HttpMethod.GET, null, Product.class, orderLine.getProductId());
+        product = restExchange.getBody();
+        return product;
     }
 
     private Order calculateOrder(Order order, Product product, OrderLine orderLine) {
@@ -110,12 +123,12 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findAll();
     }
 
-    @StreamListener(target = Sink.INPUT)
+    //    @StreamListener(target = Sink.INPUT)
     @Override
     public void consumerProductEvent(@Payload Product event) {
-        System.out.println("Received a product {} " + event.getId() + " Price: " +
-                event.getPrice());
-        MySimpleCache.put(event);
+//        System.out.println("Received a product {} " + event.getId() + " Price: " +
+//                event.getPrice());
+//        MySimpleCache.put(event);
     }
 
 }

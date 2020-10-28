@@ -18,12 +18,12 @@ public class Order {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+	private Long id;
 
 	private double totalOrder;
 
 	private String status;
 
-  	@OneToMany(cascade = CascadeType.ALL, mappedBy = "order_id", fetch = FetchType.LAZY)
+  	@OneToMany(cascade = CascadeType.ALL, mappedBy = "order_id", fetch=FetchType.LAZY)
 	private List<OrderLine> products = new ArrayList<>();
 }

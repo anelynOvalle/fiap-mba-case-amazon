@@ -1,9 +1,9 @@
 package com.fiap.ralfmed.orderamazonservice.controller;
 
 import com.fiap.ralfmed.orderamazonservice.entity.Order;
+import com.fiap.ralfmed.orderamazonservice.entity.ResponseOrder;
 import com.fiap.ralfmed.orderamazonservice.service.OrderService;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +24,7 @@ public class OrderServiceController {
 	@HystrixCommand(fallbackMethod  = "singleOrderFallback")
 	public String createOrder(@RequestBody Order order) {
 		Order createOrder = orderService.createOrder(order); // item 22.b
-		return "Status do pedido = " + createOrder.getStatus() + ". O total do pedido é: " + createOrder.getTotalOrder();
+		return ResponseOrder.convert(order);
 	}
 
 	@GetMapping("/{id}")
