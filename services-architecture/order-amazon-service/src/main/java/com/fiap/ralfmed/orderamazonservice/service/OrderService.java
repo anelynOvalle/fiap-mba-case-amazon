@@ -14,4 +14,7 @@ public interface OrderService {
 	Order findById(Long id);
 
 	List<Order> getListOrder();
+
+	Order calculateDeliveryPrice(Long id, Double distance);
+
 }

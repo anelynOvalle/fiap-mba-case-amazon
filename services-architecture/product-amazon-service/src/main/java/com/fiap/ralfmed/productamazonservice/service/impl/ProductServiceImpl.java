@@ -1,18 +1,14 @@
 package com.fiap.ralfmed.productamazonservice.service.impl;
 
 import com.fiap.ralfmed.productamazonservice.dto.ProductDTO;
-import com.fiap.ralfmed.productamazonservice.dto.ProductWishListDTO;
 import com.fiap.ralfmed.productamazonservice.entity.Product;
 import com.fiap.ralfmed.productamazonservice.repository.ProductRepository;
 import com.fiap.ralfmed.productamazonservice.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.stream.messaging.Source;
-import org.springframework.stereotype.Service;
-
-import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.annotation.StreamListener;
-import org.springframework.cloud.stream.messaging.Sink;
+import org.springframework.cloud.stream.messaging.Source;
+import org.springframework.messaging.support.MessageBuilder;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +22,7 @@ public class ProductServiceImpl implements ProductService {
 
     private ProductRepository productRepository;
 
-    public ProductServiceImpl(ProductRepository productRepository) {
+    public ProductServiceImpl(ProductRepository productRepository){
         this.productRepository = productRepository;
     }
 
@@ -53,7 +49,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDTO findById(Long id) {
         Product product = (Product) productRepository.findById(id).get();
-        //product.setMostViewed(product.getMostViewed()+1L);
         productRepository.save(product);
         return ProductDTO.convertProductDto(product);
     }

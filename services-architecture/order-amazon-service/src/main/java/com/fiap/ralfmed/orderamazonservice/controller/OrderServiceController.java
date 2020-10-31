@@ -39,6 +39,12 @@ public class OrderServiceController {
 		return orderService.getListOrder();
 	}
 
+	@GetMapping("/calculateDeliveryPrice/{id}/{distance}")
+	@ResponseStatus(HttpStatus.OK)
+	public Order calculateDeliveryPrice(@PathVariable(name = "id") Long id, @PathVariable(name = "distance") Double distance){
+		return orderService.calculateDeliveryPrice(id, distance);
+	}
+
 	public Order singleOrderFallback(Order order) {
 		return order;
 	}

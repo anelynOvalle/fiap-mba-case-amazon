@@ -29,5 +29,4 @@ public final class MySimpleCache {
 		LOGGER.info("Insert/Udate key: " + product.getId() + " into cache");
 		PRODUCT_CACHE.put(product.getId(), product);
 	}
-
 }

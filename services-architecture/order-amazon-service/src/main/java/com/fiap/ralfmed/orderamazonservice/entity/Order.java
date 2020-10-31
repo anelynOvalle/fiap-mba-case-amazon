@@ -24,6 +24,8 @@ public class Order {
 
 	private String status;
 
-  	@OneToMany(cascade = CascadeType.ALL, mappedBy = "order_id", fetch=FetchType.LAZY)
+	private double deliveryPrice;
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "order_id", fetch=FetchType.LAZY)
 	private List<OrderLine> products = new ArrayList<>();
 }

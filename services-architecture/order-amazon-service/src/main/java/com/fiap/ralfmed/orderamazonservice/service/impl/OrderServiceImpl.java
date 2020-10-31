@@ -9,6 +9,9 @@ import com.fiap.ralfmed.orderamazonservice.repository.ProductRepository;
 import com.fiap.ralfmed.orderamazonservice.service.OrderService;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.cloud.stream.annotation.EnableBinding;
+import org.springframework.cloud.stream.annotation.StreamListener;
+import org.springframework.cloud.stream.messaging.Sink;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -20,7 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-//@EnableBinding(Sink.class)
+@EnableBinding(Sink.class)
 public class OrderServiceImpl implements OrderService {
 
     private DiscoveryClient discoveryClient;
@@ -112,7 +115,6 @@ public class OrderServiceImpl implements OrderService {
         return true;
     }
 
-
     @Override
     public Order findById(Long id) {
         return (Order)orderRepository.findById(id).get();
@@ -123,12 +125,32 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findAll();
     }
 
-    //    @StreamListener(target = Sink.INPUT)
-    @Override
-    public void consumerProductEvent(@Payload Product event) {
-//        System.out.println("Received a product {} " + event.getId() + " Price: " +
-//                event.getPrice());
-//        MySimpleCache.put(event);
+    public Order calculateDeliveryPrice(Long id, Double distance) {
+        Order order = findById(id);
+        Double deliveryPrice = 0.0;
+
+        if (distance >= 20) {
+            deliveryPrice = 100.0;
+        }
+        if (distance > 0 && distance < 10) {
+            deliveryPrice = 30.0;
+        }
+        if (distance >= 10 && distance < 20) {
+            deliveryPrice = 60.0;
+        }
+        if (distance <= 0) {
+            deliveryPrice = 0.0;
+        }
+        order.setDeliveryPrice(deliveryPrice);
+        orderRepository.save(order);
+        return order;
     }
 
+    @StreamListener(target = Sink.INPUT)
+    @Override
+    public void consumerProductEvent(@Payload Product event) {
+        System.out.println("Received a product {} " + event.getId() + " Price: " +
+                event.getPrice());
+        MySimpleCache.put(event);
+    }
 }
