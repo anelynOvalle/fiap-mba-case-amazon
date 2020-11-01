@@ -1,6 +1,7 @@
 package com.fiap.ralfmed.ticketamazonservice.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,7 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,7 +31,7 @@ public class TicketController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @HystrixCommand(fallbackMethod  = "singleTicketFallback",
+    @HystrixCommand(fallbackMethod  = "singleTicketFallback2",
 		commandProperties=
 		{@HystrixProperty(
 				name="execution.isolation.thread.timeoutInMilliseconds",value="2000")})
@@ -39,10 +39,10 @@ public class TicketController {
         return ticketService.create(ticketDTO);
     }
 
-    @GetMapping
+    @GetMapping("/findById/{id}")
     @ResponseStatus(HttpStatus.OK)
     @HystrixCommand(fallbackMethod  = "singleTicketFallback")
-    public Ticket findById(@RequestParam Long id){
+    public TicketDTO findById(@PathVariable(name = "id") Long id){
         return ticketService.findById(id);
     }
 
@@ -51,31 +51,30 @@ public class TicketController {
     @HystrixCommand(fallbackMethod  = "listFallbackReturn")
     public List<Ticket> findByType(@PathVariable(name = "type") String type){
     	
-    	/*try {
-			Thread.sleep(50000);
-			return ticketService.findByType(type);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		return null;*/
-    	
         return ticketService.findByType(type);
     }
     
-    public Ticket singleTicketFallback(TicketDTO ticketDTO) {
+    public TicketDTO singleTicketFallback(Long lg) {
 		Ticket ticket = new Ticket();
 		ticket.subject = "Erro ao cadastrar.";
-		ticket.status = "Inválido";
 		ticket.description = "Tente novamente mais tarde ou contate o administrador do sistema.";
+		
+		return TicketDTO.convertTicketDto(ticket);
+	}
+    
+    public Ticket singleTicketFallback2(TicketDTO tckt) {
+		Ticket ticket = new Ticket();
+		ticket.subject = "Erro ao cadastrar.";
+		ticket.description = "Tente novamente mais tarde ou contate o administrador do sistema.";
+		
 		return ticket;
 	}
     
     public List<Ticket> listFallbackReturn(String str){
-    	List<Ticket> ticketList = null; //= new List<Ticket>();
+    	List<Ticket> ticketList = null;
     	
     	Ticket ticket = new Ticket();
 		ticket.subject = "Erro ao cadastrar.";
-		ticket.status = "Inválido";
 		ticket.description = "Tente novamente mais tarde ou contate o administrador do sistema.";
     
 		ticketList.add(ticket);
