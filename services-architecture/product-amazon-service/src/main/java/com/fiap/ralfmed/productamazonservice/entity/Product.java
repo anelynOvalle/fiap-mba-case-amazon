@@ -45,6 +45,9 @@ public class Product {
         this.genre = productDTO.getGenre();
     }
 
+    public Long getId() {
+        return id;
+    }
 
     public static Product convertToProduct(ProductDTO productDTO){
         Product product = new Product();

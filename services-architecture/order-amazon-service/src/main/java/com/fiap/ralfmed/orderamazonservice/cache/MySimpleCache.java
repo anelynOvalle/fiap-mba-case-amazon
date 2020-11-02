@@ -26,7 +26,7 @@ public final class MySimpleCache {
 	}
 
 	public synchronized static void put(Product product) {
-		LOGGER.info("Insert/Udate key: " + product.getId() + " into cache");
+		LOGGER.info("Insert/Update key: " + product.getId() + " into cache");
 		PRODUCT_CACHE.put(product.getId(), product);
 	}
 }
