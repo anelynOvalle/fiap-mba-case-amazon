@@ -35,8 +35,11 @@ public class ProductServiceImpl implements ProductService {
     public Product updatePrice(Long id, Float price) {
         Product product = (Product) productRepository.findById(id).get();
         product.setPrice(price);
+
+        product = productRepository.save(product);
         source.output().send(MessageBuilder.withPayload(product).build());
-        return productRepository.save(product);
+        System.out.println(MessageBuilder.withPayload(product).build());
+        return product;
     }
 
     @Override
@@ -49,6 +52,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDTO findById(Long id) {
         Product product = (Product) productRepository.findById(id).get();
+        product.setMostViewed(product.getMostViewed()+1L);
         productRepository.save(product);
         return ProductDTO.convertProductDto(product);
     }

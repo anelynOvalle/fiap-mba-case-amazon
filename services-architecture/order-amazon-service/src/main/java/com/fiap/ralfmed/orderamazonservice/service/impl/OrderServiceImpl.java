@@ -7,6 +7,7 @@ import com.fiap.ralfmed.orderamazonservice.entity.Product;
 import com.fiap.ralfmed.orderamazonservice.repository.OrderRepository;
 import com.fiap.ralfmed.orderamazonservice.repository.ProductRepository;
 import com.fiap.ralfmed.orderamazonservice.service.OrderService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.stream.annotation.EnableBinding;
@@ -26,6 +27,7 @@ import java.util.Optional;
 @EnableBinding(Sink.class)
 public class OrderServiceImpl implements OrderService {
 
+    @Autowired
     private DiscoveryClient discoveryClient;
 
     private OrderRepository orderRepository;
@@ -43,7 +45,7 @@ public class OrderServiceImpl implements OrderService {
         OrderLine orderLineNew = new OrderLine();
         Product product = new Product();
         List<OrderLine> products = new ArrayList<>();
-
+        System.out.println(order.getProducts());
         for(OrderLine orderLine: order.getProducts()){
 
             Product productCache = MySimpleCache.get(orderLine.getProductId());
@@ -57,12 +59,13 @@ public class OrderServiceImpl implements OrderService {
                 }
 
                 orderLineNew = loadingOrderLine(orderLine, order, products);
-                MySimpleCache.put(product);
                 order = calculateOrder(order, product, orderLineNew);
+                System.out.println(product);
 
             }else{
                 orderLineNew = loadingOrderLine(orderLine, order, products);
                 order = calculateOrder(order, productCache, orderLineNew);
+                System.out.println(productCache);
             }
         }
 
@@ -84,18 +87,27 @@ public class OrderServiceImpl implements OrderService {
 
     private Product returnProductBase(Product product, OrderLine orderLine) {
         List<ServiceInstance> instances = discoveryClient.getInstances("productservice");
-        RestTemplate restTemplate = new RestTemplate();
-        String uri = String.format("%s/product/%s",
-                instances.get(0).getUri().toString(), orderLine.getProductId());
-        ResponseEntity<Product> restExchange = restTemplate.exchange(uri,
-                HttpMethod.GET, null, Product.class, orderLine.getProductId());
-        product = restExchange.getBody();
+        if (instances.size() == 0) {
+            throw new RuntimeException();
+        }
+       else{
+            RestTemplate restTemplate = new RestTemplate();
+            String uri = String.format("%s/product/%s",
+                    instances.get(0).getUri().toString(), orderLine.getProductId());
+            ResponseEntity<Product> restExchange = restTemplate.exchange(uri,
+                    HttpMethod.GET, null, Product.class, orderLine.getProductId());
+            product = restExchange.getBody();
+            MySimpleCache.put(product);
+            System.out.println(product);
+            System.out.println(orderLine.getProductId());
+        }
         return product;
     }
 
     private Order calculateOrder(Order order, Product product, OrderLine orderLine) {
         order.setTotalOrder(order.getTotalOrder() + (orderLine.getQuantity() * product.getPrice()));
         order.setStatus("Created");
+        System.out.println("chamou calculate");
         return order;
     }
 
@@ -146,11 +158,12 @@ public class OrderServiceImpl implements OrderService {
         return order;
     }
 
-    @StreamListener(target = Sink.INPUT)
     @Override
+    @StreamListener(target = Sink.INPUT)
     public void consumerProductEvent(@Payload Product event) {
         System.out.println("Received a product {} " + event.getId() + " Price: " +
                 event.getPrice());
         MySimpleCache.put(event);
     }
+
 }
